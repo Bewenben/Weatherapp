@@ -1,0 +1,68 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@200;400;700&display=swap');
+
+body{
+    margin: 0;
+    height: auto;
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    -o-background-size: cover;
+    background-size: cover;
+    background-attachment: fixed;
+    background-position: center;
+    font-family: 'Poppins', sans-serif;
+}
+
+.container{
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+}
+
+.weather-container{
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 16px;
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+    backdrop-filter: blur(5px);
+    -webkit-backdrop-filter: blur(5px);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    padding: 30px;
+}
+
+.app-title{
+    font-weight: 700;
+    font-size: 2.5rem;
+}
+
+.date{
+    font-size: 1.3rem;
+    padding-bottom: 10px;
+}
+
+.temp-val p{
+    font-weight: 700;
+    cursor: pointer;
+    font-size: 4rem;
+    margin: 0;
+    transition: all 0.3s;
+}
+
+.temp-val p:hover{
+    transform: scale(1.3);
+}
+
+.temp-val span{
+    font-weight: 200;
+}
+
+.temp-desc p{
+    font-weight: 400;
+    font-size: 1.3rem;
+}
+
+.location p{
+    font-weight: 200;
+    font-size: 1.3rem;
+}
