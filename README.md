@@ -2,6 +2,10 @@
 
 ## Changelog
 
+### Version 3.0.1
+
+- Fixed Responsiveness after adding new components
+
 ### Version 3.0
 
 - Added Search for any country, city's weather + current location button

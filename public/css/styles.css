@@ -37,17 +37,16 @@ button{
 }
 
 .container{
+    margin-top: 10px;
     text-align: center;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
     height: 100vh;
 }
 
 .display{
     display: flex;
     flex-direction: row;
+    align-items: center;
+    justify-content: center;
 }
 
 
@@ -118,12 +117,9 @@ button{
 @media (max-width: 768px){
     .container{
         text-align: center;
-        display: flex;
-        flex-direction: column;
         align-items: center;
         justify-content: center;
-        height: 100vh;
-        padding: 100px;
+        height: 10vh;
     }
     .weather-container{
         background: rgba(255, 255, 255, 0.2);
@@ -135,8 +131,7 @@ button{
         padding: 10px;
     }
 
-    .app-title{
-        margin-top: 10px;
+    .header{
         font-size: 2rem;
     }
     .display{
@@ -145,8 +140,12 @@ button{
     }
     .hourly-container{
         height: 20vh;
+        margin-bottom: 20px;
     }
     #myChart{
         height: 20vh;
+    }
+    .app-title{
+        font-size: 14px;
     }
 }
