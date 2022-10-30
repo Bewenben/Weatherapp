@@ -67,27 +67,36 @@ function Location(){
 
 async function Weather(latitude, longitude) {
 
+    // Event Listener to call setQuery function when Enter is pressed
     searchbox.addEventListener('keypress', setQuery);
 
     function setQuery(e) {
         if (e.keyCode === 13) {
+            // Calls Current Weather's Given Location name function
             getUserWeather(null,null,searchbox.value);
+            // Calls Hourly Weather's Given Location name function
             getHourlyWeather(null,null,searchbox.value);
         }
     }
 
+    // Calls Current Weather's Current Location function
     getUserWeather(latitude, longitude,null)
+    // Calls Hourly Weather's Current Location function
     getHourlyWeather(latitude, longitude,null)
 
     // Function to fetch user's location weather information from the API
     async function getUserWeather(latitude, longitude , query) {
 
         let api;
-        // OpenWeatherApp API is used to retrieve weather information based on user's location (latitude and longitude)
+        // if the user didn't enter a location's name in the searchbox, then the current location will be fetched
         if(query === null){
+            // OpenWeatherApp API is used to retrieve weather information based on user's location (latitude and longitude)
             api = `https://api.openweathermap.org/data/2.5/weather?lat=${latitude}&lon=${longitude}&appid=${key}`
         } else{
+            // OpenWeatherApp API is used to retrieve weather information based on given location (query)
             api = `https://api.openweathermap.org/data/2.5/weather?q=${query}&appid=${key}`
+            // Since the chart is created every time the website loads, it needs to be destroyed before creating
+            // new chart object so that the chart can be replaced.
             threehoursChart.destroy()
         }
 
@@ -108,6 +117,8 @@ async function Weather(latitude, longitude) {
                 // The weather's condition's in a certain country
                 weather.country = data.sys.country;
             }).then(() => {
+                // nightcheck is a constant that determines whether if it's night time or not depending on the icon's name fetched from the api
+                // Every night icon is ended with "n" character and every day icon is ended with "d" character
                 nightcheck = weather.icon.toString().charAt(2)
                 if (nightcheck === "n") {
                     night = true;
@@ -134,10 +145,13 @@ async function Weather(latitude, longitude) {
                 return data;
             })
             .then((data) => {
+                // Array of temperature values
                 let arrtemp = []
+                // Array of time values
                 let arrdt = []
                 for (let i = 0; i < 16; i++) {
                     arrtemp[i] = JSON.parse(Math.floor(data.list[i].main.temp - Kelvin))
+                    // API returns the time in milliseconds
                     let unix = JSON.parse(data.list[i].dt)
                     let date = new Date(unix * 1000)
                     let hours = date.getHours()
@@ -160,12 +174,6 @@ async function Weather(latitude, longitude) {
                                 ]
                             },
                             options: {
-                                legend: {
-                                    labels: {
-                                        fontColor: "blue",
-                                        fontSize: 18
-                                    }
-                                },
                                 scales: {
                                     y: {
                                         ticks: {
@@ -219,14 +227,9 @@ async function Weather(latitude, longitude) {
                                 title: {
                                     display: true,
                                     text: '3-Hours Forecast',
-                                    color: "white"
+                                    color: "black"
                                 },
                                 responsive: true,
-                                legend: {
-                                    labels: {
-                                        color: "white",
-                                    }
-                                },
                             },
                             scales: {
                                 y: {
@@ -268,6 +271,7 @@ async function Weather(latitude, longitude) {
             title.innerHTML = "Today's Weather";
             icon.innerHTML = `<img src="img/weathericons/day/${weather.icon}.png" alt="${weather.icon}"/>`;
         }
+        // Background images are named according to the weather condition with the same name as the icon so nearly every icon has its background image
         bg.style.backgroundImage = `url("./img/${weather.icon}.jpg")`;
         value.innerHTML = `${weather.temperature.value} <span>°C</span>`;
         // Since the description is retrieved in small letters, descr is used to capitalize the first letter
@@ -276,8 +280,6 @@ async function Weather(latitude, longitude) {
         loc.innerHTML = `${weather.city}, ${weather.country}`;
     }
 }
-
-
 
 // Function to convert the temperature value from celsius to fahrenheit
 function CtoF(valuetemp) {
