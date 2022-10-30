@@ -13,6 +13,29 @@ body{
     overflow: auto;
 }
 
+input{
+    background: rgba(255, 255, 255, 0.2);
+    color: white;
+    border-radius: 3px;
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+    backdrop-filter: blur(5px);
+    -webkit-backdrop-filter: blur(5px);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    font-family: Poppins;
+    margin: 5px;
+}
+
+button{
+    background: rgba(255, 255, 255, 0.5);
+    color: white;
+    border-radius: 3px;
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+    backdrop-filter: blur(5px);
+    -webkit-backdrop-filter: blur(5px);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    font-family: Poppins;
+}
+
 .container{
     text-align: center;
     display: flex;
@@ -48,24 +71,12 @@ body{
     border: 1px solid rgba(255, 255, 255, 0.3);
     padding: 30px;
     margin: 5px;
-    height: 30vh;
-}
-
-.hourly-hcontainer{
-    background: rgba(255, 255, 255, 0.2);
-    border-radius: 16px;
-    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
-    backdrop-filter: blur(5px);
-    -webkit-backdrop-filter: blur(5px);
-    border: 1px solid rgba(255, 255, 255, 0.3);
-    padding: 30px;
-    margin: 5px;
-    overflow-x: auto;
-    overflow-y: hidden;
+    height: 65vh;
+    transition: all 0.5;
 }
 
 #myChart{
-    height: 30vh;
+    height: 65vh;
 }
 
 .app-title{
@@ -125,7 +136,7 @@ body{
     }
 
     .app-title{
-        margin-top: 300px;
+        margin-top: 10px;
         font-size: 2rem;
     }
     .display{

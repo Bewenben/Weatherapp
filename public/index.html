@@ -12,7 +12,13 @@
 
 <body>
     <div class="container">
-        <div class="app-title">Today's Weather</div>
+        <div class="header">
+            <input class="search-box" type="text" placeholder="Search Country, City, etc..">
+            <button onclick="Location()">Current Location</button>
+            <div class="app-title">
+                Weather
+            </div>
+        </div>
         <div class="date"></div>
         <div class="display">
             <div class="weather-container">
@@ -31,15 +37,6 @@
             <div>
                 <div class="hourly-container">
                     <canvas id="myChart"></canvas>
-                </div>
-                <div class="hourly-hcontainer">
-                    <div class="weather-hicon"><img src="img/weatherhicons/day/unknown.png" alt="Unknown"></div>
-                    <div class="temp-hval">
-                        <p>- <span>°C</span></p>
-                    </div>
-                    <div class="temp-time">
-                        <p>-</p>
-                    </div>
                 </div>
             </div>
         </div>

@@ -14,6 +14,9 @@ const Kelvin = 273
 const weather = {};
 const hourlyweather = {};
 let nightcheck;
+const searchbox = document.querySelector(".search-box");
+let myChart = document.getElementById('myChart').getContext('2d');
+let threehoursChart;
 
 // Date Display
 dateselector.innerHTML = new Date().toDateString();
@@ -43,60 +46,209 @@ value.addEventListener("click", function () {
     }
 })
 
-// Function to convert the temperature value from celsius to fahrenheit
-function CtoF(valuetemp) {
-    return (valuetemp * 1.8) + 32;
-}
+window.onload = Location;
 
-// Checking if the user's location can be retrieved
-if ("geolocation" in navigator) {
-    // If yes, the user's location (latitude and longitude) will be retrieved
-    navigator.geolocation.getCurrentPosition(function (position) {
-        let latitude = position.coords.latitude;
-        let longitude = position.coords.longitude;
-        getUserWeather(latitude, longitude);
-        getHourlyWeather(latitude, longitude);
-    })
-} else {
-    // If no, an error will appear to the user
-    catcherror.innerHTML = `<p>There has been an error</p>`;
-}
-
-
-// Function to fetch user's location weather information from the API
-async function getUserWeather(latitude, longitude) {
-
-    // OpenWeatherApp API is used to retrieve weather information based on user's location (latitude and longitude)
-
-    let api = `https://api.openweathermap.org/data/2.5/weather?lat=${latitude}&lon=${longitude}&appid=${key}`;
-
-    fetch(api)
-        .then((res) => {
-            let data = res.json();
-            return data;
+function Location(){
+    if ("geolocation" in navigator) {
+        // If yes, the user's location (latitude and longitude) will be retrieved
+        if(threehoursChart !== undefined){
+            threehoursChart.destroy();
+        }
+        navigator.geolocation.getCurrentPosition(function (position) {
+            let latitude = position.coords.latitude;
+            let longitude = position.coords.longitude;
+            Weather(latitude, longitude);
         })
-        .then((data) => {
-            // Temp value is retrieved in Kelvin so, to get the temperature in celsius, temperature is subtracted by 273 (Kelvin)
-            weather.temperature.value = Math.floor(data.main.temp - Kelvin);
-            // The weather's condition
-            weather.description = data.weather[0].description;
-            // The weather's condition's icon
-            weather.icon = data.weather[0].icon;
-            // The weather's condition's in a certain city
-            weather.city = data.name;
-            // The weather's condition's in a certain country
-            weather.country = data.sys.country;
-        }).then(() => {
-            nightcheck = weather.icon.toString().charAt(2)
-            if (nightcheck === "n") {
-                night = true;
-            }
-            else {
-                night = false;
-            }
-            Display();
-        });
+    } else {
+        // If no, an error will appear to the user
+        catcherror.innerHTML = `<p>There has been an error</p>`;
+    }
+}
 
+async function Weather(latitude, longitude) {
+
+    searchbox.addEventListener('keypress', setQuery);
+
+    function setQuery(e) {
+        if (e.keyCode === 13) {
+            getUserWeather(null,null,searchbox.value);
+            getHourlyWeather(null,null,searchbox.value);
+        }
+    }
+
+    getUserWeather(latitude, longitude,null)
+    getHourlyWeather(latitude, longitude,null)
+
+    // Function to fetch user's location weather information from the API
+    async function getUserWeather(latitude, longitude , query) {
+
+        let api;
+        // OpenWeatherApp API is used to retrieve weather information based on user's location (latitude and longitude)
+        if(query === null){
+            api = `https://api.openweathermap.org/data/2.5/weather?lat=${latitude}&lon=${longitude}&appid=${key}`
+        } else{
+            api = `https://api.openweathermap.org/data/2.5/weather?q=${query}&appid=${key}`
+            threehoursChart.destroy()
+        }
+
+        fetch(api)
+            .then((res) => {
+                let data = res.json();
+                return data;
+            })
+            .then((data) => {
+                // Temp value is retrieved in Kelvin so, to get the temperature in celsius, temperature is subtracted by 273 (Kelvin)
+                weather.temperature.value = Math.floor(data.main.temp - Kelvin);
+                // The weather's condition
+                weather.description = data.weather[0].description;
+                // The weather's condition's icon
+                weather.icon = data.weather[0].icon;
+                // The weather's condition's in a certain city
+                weather.city = data.name;
+                // The weather's condition's in a certain country
+                weather.country = data.sys.country;
+            }).then(() => {
+                nightcheck = weather.icon.toString().charAt(2)
+                if (nightcheck === "n") {
+                    night = true;
+                }
+                else {
+                    night = false;
+                }
+                Display();
+            });
+    }
+
+    async function getHourlyWeather(latitude, longitude , query) {
+        let api;
+        if (query === null || query == ""){
+            api = `https://api.openweathermap.org/data/2.5/forecast?lat=${latitude}&lon=${longitude}&appid=${key}`
+        }
+        else{
+            api = `https://api.openweathermap.org/data/2.5/forecast?q=${query}&appid=${key}`
+            threehoursChart.destroy()
+        }
+        fetch(api)
+            .then((res) => {
+                let data = res.json();
+                return data;
+            })
+            .then((data) => {
+                let arrtemp = []
+                let arrdt = []
+                for (let i = 0; i < 16; i++) {
+                    arrtemp[i] = JSON.parse(Math.floor(data.list[i].main.temp - Kelvin))
+                    let unix = JSON.parse(data.list[i].dt)
+                    let date = new Date(unix * 1000)
+                    let hours = date.getHours()
+                    let minutes = date.getMinutes()
+                    arrdt[i] = hours + ":" + minutes + "0"
+                }
+                if (night) {
+                        threehoursChart = new Chart(myChart, {
+                            type: 'line',
+                            data: {
+                                labels: arrdt,
+                                datasets: [{
+                                    label: 'Hours',
+                                    data: arrtemp,
+                                    backgroundColor: 'white',
+                                    fill: false,
+                                    borderColor: 'white',
+                                    color: "#ffffff"
+                                },
+                                ]
+                            },
+                            options: {
+                                legend: {
+                                    labels: {
+                                        fontColor: "blue",
+                                        fontSize: 18
+                                    }
+                                },
+                                scales: {
+                                    y: {
+                                        ticks: {
+                                            color: "white",
+                                            stepSize: 1,
+                                            beginAtZero: true
+                                        }
+                                    },
+                                    x: {
+                                        ticks: {
+                                            color: "white",
+                                            stepSize: 1,
+                                            beginAtZero: true
+                                        }
+                                    }
+                                },
+                                plugins: {
+                                    title: {
+                                        display: true,
+                                        text: '3-Hours Forecast',
+                                        fontSize: 25,
+                                        color: "#ffffff"
+                                    },
+                                    responsive: true,
+                                    legend: {
+                                        labels: {
+                                            color: "white",
+                                        }
+                                    },
+                                }
+                            },
+                        });
+                }
+                else {
+                    threehoursChart = new Chart(myChart, {
+                        type: 'line',
+                        data: {
+                            labels: arrdt,
+                            datasets: [{
+                                label: 'Hours',
+                                data: arrtemp,
+                                backgroundColor: 'black',
+                                fill: false,
+                                borderColor: 'rgb(0,0,0)',
+                                color: "#ffffff"
+                            },
+                            ],
+                        },
+                        options: {
+                            plugins: {
+                                title: {
+                                    display: true,
+                                    text: '3-Hours Forecast',
+                                    color: "white"
+                                },
+                                responsive: true,
+                                legend: {
+                                    labels: {
+                                        color: "white",
+                                    }
+                                },
+                            },
+                            scales: {
+                                y: {
+                                    ticks: {
+                                        color: "black",
+                                        stepSize: 1,
+                                        beginAtZero: true
+                                    }
+                                },
+                                x: {
+                                    ticks: {
+                                        color: "black",
+                                        stepSize: 1,
+                                        beginAtZero: true
+                                    }
+                                }
+                            },
+                        }
+                    })
+                }
+            })
+    }
 
     // Display the weather information
     function Display() {
@@ -125,118 +277,9 @@ async function getUserWeather(latitude, longitude) {
     }
 }
 
-async function getHourlyWeather(latitude, longitude) {
 
-    let api = `https://api.openweathermap.org/data/2.5/forecast?lat=${latitude}&lon=${longitude}&appid=${key}`
 
-    fetch(api)
-        .then((res) => {
-            let data = res.json();
-            console.log(data);
-            return data;
-        })
-        .then((data) => {
-            let arrtemp = []
-            let arrdt = []
-            let arricon = []
-            for (let i = 0; i < 8; i++) {
-                arrtemp[i] = JSON.parse(Math.floor(data.list[i].main.temp - Kelvin))
-                let unix = JSON.parse(data.list[i].dt)
-                // arricon[i] = JSON.parse(data.list[i].
-                let date = new Date(unix * 1000)
-                let hours = date.getHours()
-                let minutes = date.getMinutes()
-                arrdt[i] = hours + ":" + minutes + "0"
-            }
-            let myChart = document.getElementById('myChart').getContext('2d');
-            if (night) {
-                let threehoursChart = new Chart(myChart, {
-                    type: 'line',
-                    data: {
-                        labels: arrdt,
-                        datasets: [{
-                            label: 'Hours',
-                            data: arrtemp,
-                            backgroundColor: 'white',
-                            fill: false,
-                            borderColor: 'white',
-                            color: "#ffffff"
-                        },
-                        ]
-                    },
-                    options: {
-                        legend: {
-                            labels: {
-                                fontColor: "blue",
-                                fontSize: 18
-                            }
-                        },
-                        scales: {
-                            y: {  // not 'yAxes: [{' anymore (not an array anymore)
-                              ticks: {
-                                color: "white", // not 'fontColor:' anymore
-                                // fontSize: 18,
-                                stepSize: 1,
-                                beginAtZero: true
-                              }
-                            },
-                            x: {  // not 'xAxes: [{' anymore (not an array anymore)
-                              ticks: {
-                                color: "white",  // not 'fontColor:' anymore
-                                //fontSize: 14,
-                                stepSize: 1,
-                                beginAtZero: true
-                              }
-                            }
-                          },
-                        plugins: {
-                        title: {
-                            display: true,
-                            text: '3-Hours Forecast',
-                            fontSize: 25,
-                            color: "#ffffff"
-                        },
-                        responsive: true,
-                        legend: {
-                            labels: {
-                                color: "white",
-                            }
-                        },
-                    }
-                    },
-                });
-            }
-            else {
-                let threehoursChart = new Chart(myChart, {
-                    type: 'line',
-                    data: {
-                        labels: arrdt,
-                        datasets: [{
-                            label: 'Hours',
-                            data: arrtemp,
-                            backgroundColor: 'black',
-                            fill: false,
-                            borderColor: 'rgb(0,0,0)',
-                            color: "#ffffff"
-                        },
-                        ],
-                    },
-                    options: {
-                        plugins: {
-                            title: {
-                                display: true,
-                                text: '3-Hours Forecast',
-                                color: "white"
-                            },
-                            responsive: true,
-                            legend: {
-                                labels: {
-                                    color: "white",
-                                }
-                            },
-                        },
-                    }
-                })
-            }
-        })
+// Function to convert the temperature value from celsius to fahrenheit
+function CtoF(valuetemp) {
+    return (valuetemp * 1.8) + 32;
 }
