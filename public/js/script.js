@@ -164,7 +164,7 @@ async function Weather(latitude, longitude) {
                             data: {
                                 labels: arrdt,
                                 datasets: [{
-                                    label: 'Hours',
+                                    label: 'Temperature',
                                     data: arrtemp,
                                     backgroundColor: 'white',
                                     fill: false,
@@ -213,7 +213,7 @@ async function Weather(latitude, longitude) {
                         data: {
                             labels: arrdt,
                             datasets: [{
-                                label: 'Hours',
+                                label: 'Temperature',
                                 data: arrtemp,
                                 backgroundColor: 'black',
                                 fill: false,

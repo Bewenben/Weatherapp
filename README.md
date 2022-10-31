@@ -53,6 +53,10 @@ Need to know how it works? The whole code is full of comments explaining what's 
 
 ## Changelog
 
+### Version 3.0.2.2
+
+- Fixed bug with chart data, hours labe has been replaced with temperature.
+
 ### Version 3.0.2.1
 
 - Added Screenshots & Installation Guide
